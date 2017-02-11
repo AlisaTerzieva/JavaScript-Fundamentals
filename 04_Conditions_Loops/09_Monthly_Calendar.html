@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monthly Calendar</title>
+    <style>
+        .prev-month, .next-month { color: #CCC }
+        .today { font-weight: bold; background: #DDD; }
+        .title { background: #AAAAFF; margin: 10px 0; padding:5px }
+        table { border: 1px solid #CCC;}
+        td { text-align: center; }
+        #calendarCode { width: 100%; }
+    </style>
+    <script>
+        function calendar([day, month, year])
+        {
+            [day, month, year] = [day, month, year].map(Number);
+            let date = new Date([month, day, year]);
+            let daysNumber = new Date(year, month, 0);
+            let firstDayDate = new Date(year, month-1, 1);
+
+            let daysInMonth = daysNumber.getDate();
+            let firstDayOfTheMonth = firstDayDate.getDay();
+            let lastDayOfTheMonth = daysNumber.getDay();
+
+            let html = '<table>\n';
+
+             html += '  <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>\n';
+
+            html += '  <tr>';
+
+            let previousMonthDays = 0;
+            for (let i = 0; i < firstDayOfTheMonth; i ++){
+                previousMonthDays ++;
+            }
+
+            let numberOfDaysInPreviousMonth =(new Date(year, month-1, -previousMonthDays+1)).getDate();
+            let lastDayOfPreviousMonth =(new Date(year, month-1, 0)).getDate();
+
+            if (firstDayOfTheMonth != 0) {
+                for (let i = numberOfDaysInPreviousMonth; i <= lastDayOfPreviousMonth; i++) {
+                    html += '<td class="prev-month">' + i + '</td>';
+                }
+            }
+
+            for (let i = 1; i <= 7-firstDayOfTheMonth; i++){
+
+                if (i == day) html += '<td class="today">' + i + '</td>';
+                else html += '<td>' + i + '</td>';
+            }
+            html += '</tr>\n';
+
+//Print days of current month
+            let dayCount = 1;
+            for (let i = 8 - previousMonthDays; i<=daysInMonth; i++){
+                if (dayCount == 1) html += '  <tr>';
+                if (i == day) html += '<td class="today">' + i + '</td>';
+                else html += '<td>' + i + '</td>';
+                dayCount ++;
+                if (dayCount == 8){
+                 html += '</tr>\n';
+                 dayCount = 1;
+                 }
+            }
+            let lastWeekNextMonthExists = false;
+            for (let i = 1; i <= 6-lastDayOfTheMonth; i++){
+                html += '<td class="next-month">' + i + '</td>';
+                lastWeekNextMonthExists = true;
+            }
+            if (lastWeekNextMonthExists)  html += '</tr>\n';
+
+            html += '</table>';
+            return html;
+        }
+    </script>
+</head>
+
+<body>
+Day: <input id="day" type="number" value="4" />
+Month: <input id="month" type="number" value="9" />
+Year: <input id="year" type="number" value="2016" />
+<input type="button" value="Show"
+       onclick="let calendarHTML =
+            calendar([document.getElementById('day').value,
+                document.getElementById('month').value,
+                document.getElementById('year').value]);
+            document.getElementById('calendar').innerHTML = calendarHTML;
+            document.getElementById('calendarCode').innerText = calendarHTML" />
+<div class="title">Calendar:</div>
+<div id="calendar">Calendar will be shown here</div>
+<div class="title">HTML:</div>
+<textarea rows="12" id="calendarCode"></textarea>
+</body>
+
+</html>
